@@ -1,38 +1,35 @@
-﻿using System.Diagnostics;
+﻿using System.Globalization;
 using System.Numerics;
 using static System.Console;
 
 class Karatsuba
 {
-    static void Main(string[] args)
+    private static (bool isValid, BigInteger number) multiplicand;
+    private static (bool isValid, BigInteger number) multiplier;
+    
+    static int Main()
     {
-        WriteLine("Karatsuba Multiplication");
-        WriteLine("------------------------");
-        WriteLine("This program demonstrates the Karatsuba multiplication algorithm.");
-        WriteLine("It multiplies two numbers using the Karatsuba algorithm.");
-        WriteLine();
-
         BigInteger x = 0;
         BigInteger y = 0;
 
         while (true)
         {
-            Write("Enter the multiplicand: ");
-            (bool validMultiplicand, BigInteger multiplicand) = TakeInput();
+            Write("Enter the multiplicand:\t");
+            multiplicand = TakeInput();
         
-            Write("Enter the multiplier: ");
-            (bool validMultiplier, BigInteger multiplier) = TakeInput();
+            Write("Enter the multiplier: \t");
+            multiplier = TakeInput();
 
-            if (validMultiplicand && validMultiplier)
+            if (!multiplicand.isValid || !multiplier.isValid)
             {
-                x = multiplicand;
-                y = multiplier;
-                break;
+                WriteLine($"Multiplicand is valid: \t{multiplicand.isValid}");
+                WriteLine($"Multiplier is valid: \t{multiplier.isValid}");
+                continue;
             }
-            else
-            {
-                WriteLine("Invalid input. Please enter valid numbers.");
-            }
+
+            x = multiplicand.number;
+            y = multiplier.number;
+            break;
         }
 
         // Perform multiplication using Karatsuba
@@ -40,6 +37,8 @@ class Karatsuba
 
         // Output the result
         WriteLine($"Result of {x} x {y} using Karatsuba: {result}");
+
+        return 0;
     }
 
     static BigInteger KaratsubaFunc(BigInteger x, BigInteger y)
@@ -67,12 +66,17 @@ class Karatsuba
 
         // Combine the results
         return z2 * BigInteger.Pow(10, 2 * half_n) + z1 * BigInteger.Pow(10, half_n) + z0;
-
     }
 
     static (bool, BigInteger) TakeInput()
     {
-        bool valid = BigInteger.TryParse(ReadLine(), out BigInteger number);
+        bool valid = BigInteger.TryParse(
+            ReadLine(),
+            NumberStyles.Integer,
+            CultureInfo.InvariantCulture,
+            out BigInteger number
+        );
+
         return (valid, number);
     }
 }
